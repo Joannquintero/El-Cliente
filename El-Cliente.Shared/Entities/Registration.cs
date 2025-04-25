@@ -1,8 +1,13 @@
-﻿namespace El_Cliente.Shared.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace El_Cliente.Shared.Entities
 {
     public class Registration
     {
         public int Id { get; set; }
+
+        [Display(Name = "Identificador")]
+        public string Identifier { get; set; } = null!;
 
         public Product Product { get; set; } = null!;
 

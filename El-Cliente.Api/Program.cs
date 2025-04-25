@@ -12,11 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer("name=DefaultConnection"));
-//builder.Services.AddTransient<SeedDb>();
-//builder.Services.AddScoped<IFileStorage, FileStorage>();
-//builder.Services.AddScoped<IUserHelper, UserHelper>();
-//builder.Services.AddScoped<IOrdersHelper, OrdersHelper>();
-
+builder.Services.AddTransient<SeedDb>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

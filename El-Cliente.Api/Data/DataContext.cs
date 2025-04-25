@@ -23,6 +23,8 @@ namespace El_Cliente.Api.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Branch>().HasIndex(x => x.Name).IsUnique();
             modelBuilder.Entity<Product>().HasIndex(x => x.Name).IsUnique();
+            modelBuilder.Entity<Registration>().HasIndex(x => x.Identifier).IsUnique();
+            modelBuilder.Entity<Transaction>().HasIndex(x => x.Identifier).IsUnique();
         }
     }
 }
