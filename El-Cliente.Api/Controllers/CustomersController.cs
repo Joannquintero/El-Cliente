@@ -18,7 +18,7 @@ namespace El_Cliente.Api.Controllers
             _customerServices = customerServices;
         }
 
-        [HttpGet]
+        [HttpGet(nameof(GetCustomersByBranchIdAsync))]
         public async Task<ActionResult> GetCustomersByBranchIdAsync([FromQuery] PaginationDTO pagination)
         {
             var response = await _customerServices.GetCustomersByBranchIdAsync(pagination);

@@ -54,6 +54,8 @@ namespace El_Cliente.Api.Services.Funds
                 var entity = ConvertsExtensions.ConvertToEntity<RegistrationDTO, Shared.Entities.Registration>(registrationDTO);
                 var registrationResponse = await _registrationRepository.CreateAsync(entity);
                 var balance = await _balanceRepository.GetByCustomerIdAsync(registrationDTO.CustomerId);
+                // consultar producto para restar saldo
+                balance.Amount -= 100;
                 var BalanceResponse = await _balanceRepository.UpdateAsync(balance);
                 response.IsSuccess = true;
                 response.Result = registrationResponse;
@@ -73,6 +75,8 @@ namespace El_Cliente.Api.Services.Funds
                 var entity = ConvertsExtensions.ConvertToEntity<RegistrationDTO, Shared.Entities.Registration>(registrationDTO);
                 var registrationResponse = await _registrationRepository.UpdateAsync(entity);
                 var balance = await _balanceRepository.GetByCustomerIdAsync(registrationDTO.CustomerId);
+                // consultar producto para regresar saldo
+                balance.Amount += 100;
                 var BalanceResponse = await _balanceRepository.UpdateAsync(balance);
                 response.IsSuccess = true;
                 response.Result = registrationResponse;

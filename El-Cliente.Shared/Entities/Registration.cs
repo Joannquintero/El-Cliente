@@ -7,7 +7,7 @@ namespace El_Cliente.Shared.Entities
         public int Id { get; set; }
 
         [Display(Name = "Identificador")]
-        public string Identifier { get; set; } = null!;
+        public string Identifier { get; set; } = Guid.NewGuid().ToString();
 
         public Product Product { get; set; } = null!;
 

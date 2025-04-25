@@ -14,10 +14,6 @@ namespace El_Cliente.Shared.DTOs
 
         public decimal Amount { get; set; }
 
-        public ICollection<Registration>? Registrations { get; set; }
-
         public ICollection<Balance>? Balances { get; set; }
-
-        public ICollection<Visit>? Visits { get; set; }
     }
 }

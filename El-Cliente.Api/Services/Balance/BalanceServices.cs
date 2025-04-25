@@ -14,6 +14,30 @@ namespace El_Cliente.Api.Services.Balance
             _balanceRepository = balanceRepository;
         }
 
+        public async Task<Shared.Entities.Balance> GetByCustomerIdAsync(long customerId)
+        {
+            var balance = await _balanceRepository.GetByCustomerIdAsync(customerId);
+            return balance!;
+        }
+
+        public async Task<Response> CreateAsync(BalanceDTO balanceDTO)
+        {
+            Response response = new();
+            try
+            {
+                var entity = ConvertsExtensions.ConvertToEntity<BalanceDTO, Shared.Entities.Balance>(balanceDTO);
+                await _balanceRepository.CreateAsync(entity);
+
+                response.IsSuccess = true;
+                response.Result = balanceDTO;
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
         public async Task<Response> UpdateAsync(BalanceDTO balanceDTO)
         {
             Response response = new();
