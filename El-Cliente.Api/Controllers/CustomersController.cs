@@ -7,10 +7,14 @@ namespace El_Cliente.Api.Controllers
     [Route("api/[controller]")]
     public class CustomersController : ControllerBase
     {
+        private readonly ILogger<CustomersController> logger;
         private readonly ICustomerServices _customerServices;
 
-        public CustomersController(ICustomerServices customerServices)
+        public CustomersController(
+            ILogger<CustomersController> logger,
+            ICustomerServices customerServices)
         {
+            this.logger = logger;
             _customerServices = customerServices;
         }
 
