@@ -1,5 +1,4 @@
 ﻿using El_Cliente.Shared.Entities;
-using System.ComponentModel.DataAnnotations;
 
 namespace El_Cliente.Shared.DTOs
 {
@@ -12,6 +11,8 @@ namespace El_Cliente.Shared.DTOs
         public string Surnames { get; set; } = null!;
 
         public string City { get; set; } = null!;
+
+        public decimal Amount { get; set; }
 
         public ICollection<Registration>? Registrations { get; set; }
 

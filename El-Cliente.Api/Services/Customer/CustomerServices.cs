@@ -2,7 +2,6 @@
 using El_Cliente.Api.Repository.Balance;
 using El_Cliente.Api.Repository.Customer;
 using El_Cliente.Shared.DTOs;
-using El_Cliente.Shared.Entities;
 using El_Cliente.Shared.Responses;
 using Microsoft.AspNetCore.Mvc;
 
@@ -54,7 +53,7 @@ namespace El_Cliente.Api.Services.Customer
             {
                 var entity = ConvertsExtensions.ConvertToEntity<CustomerDTO, Shared.Entities.Customer>(customerDTO);
                 var customersResponse = await _customerRepository.CreateAsync(entity);
-                var BalanceResponse = await _balanceRepository.CreateAsync(new Balance { });
+                var BalanceResponse = await _balanceRepository.CreateAsync(new Shared.Entities.Balance { Customer = customersResponse, Amount = customerDTO.Amount });
                 response.IsSuccess = true;
                 response.Result = customerDTO;
             }

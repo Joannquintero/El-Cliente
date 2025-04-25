@@ -16,5 +16,7 @@ namespace El_Cliente.Shared.Entities
         public Customer Customer { get; set; } = null!;
 
         public long CustomerId { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }
