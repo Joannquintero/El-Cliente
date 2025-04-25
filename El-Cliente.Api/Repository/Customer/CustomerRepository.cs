@@ -32,6 +32,13 @@ namespace El_Cliente.Api.Repository.Customer
                 .ToListAsync();
         }
 
+        public async Task<Shared.Entities.Customer> GetAsync(long id)
+        {
+            Shared.Entities.Customer? customer = await _context.Customers
+                .FirstOrDefaultAsync(x => x.Id == id);
+            return customer!;
+        }
+
         public async Task<Shared.Entities.Customer> CreateAsync(Shared.Entities.Customer customer)
         {
             _context.Customers.Add(customer);

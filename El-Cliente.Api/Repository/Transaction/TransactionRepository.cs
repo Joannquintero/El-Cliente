@@ -4,11 +4,11 @@ namespace El_Cliente.Api.Repository.Transaction
 {
     public class TransactionRepository : ITransactionRepository
     {
-        private readonly DataContext _dataContext;
+        private readonly DataContext _context;
 
         public TransactionRepository(DataContext dataContext)
         {
-            _dataContext = dataContext;
+            _context = dataContext;
         }
     }
 }

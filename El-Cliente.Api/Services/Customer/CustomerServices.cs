@@ -46,6 +46,22 @@ namespace El_Cliente.Api.Services.Customer
             return response;
         }
 
+        public async Task<Response> GetCustomerByIdAsync(long id)
+        {
+            Response response = new();
+            try
+            {
+                var customerResponse = await _customerRepository.GetAsync(id);
+                response.IsSuccess = true;
+                response.Result = customerResponse;
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
         public async Task<Response> CreateAsync(CustomerDTO customerDTO)
         {
             Response response = new();

@@ -8,16 +8,16 @@ namespace El_Cliente.Api.Repository.Availability
 {
     public class AvailabilityRepository : IAvailabilityRepository
     {
-        private readonly DataContext _dataContext;
+        private readonly DataContext _context;
 
         public AvailabilityRepository(DataContext dataContext)
         {
-            _dataContext = dataContext;
+            _context = dataContext;
         }
 
         public async Task<List<Shared.Entities.Availability>> GetAvailabilityProductsByBranchIdAsync([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _dataContext.Availability
+            var queryable = _context.Availability
                  .Include(x => x.Product)
                  .AsQueryable();
 

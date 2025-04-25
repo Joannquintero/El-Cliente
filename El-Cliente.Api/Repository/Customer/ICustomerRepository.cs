@@ -7,6 +7,8 @@ namespace El_Cliente.Api.Repository.Customer
     {
         Task<List<Shared.Entities.Customer>> GetCustomersByBranchIdAsync([FromQuery] PaginationDTO pagination);
 
+        Task<Shared.Entities.Customer> GetAsync(long id);
+
         Task<Shared.Entities.Customer> CreateAsync(Shared.Entities.Customer customer);
     }
 }

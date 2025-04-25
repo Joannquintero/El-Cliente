@@ -25,6 +25,13 @@ namespace El_Cliente.Api.Controllers
             return Ok(response);
         }
 
+        [HttpGet("{id:long}")]
+        public async Task<ActionResult> GetCustomerByIdAsync(long id)
+        {
+            var response = await _customerServices.GetCustomerByIdAsync(id);
+            return Ok(response);
+        }
+
         [HttpPost]
         public async Task<ActionResult> CreateAsync(CustomerDTO customerDTO)
         {

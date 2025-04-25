@@ -4,11 +4,11 @@ namespace El_Cliente.Api.Repository.Visit
 {
     public class VisitRepository : IVisitRepository
     {
-        private readonly DataContext _dataContext;
+        private readonly DataContext _context;
 
         public VisitRepository(DataContext dataContext)
         {
-            _dataContext = dataContext;
+            _context = dataContext;
         }
     }
 }
