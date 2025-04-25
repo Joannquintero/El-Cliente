@@ -1,5 +1,5 @@
 using CurrieTechnologies.Razor.SweetAlert2;
-using El_Cliente.Shared.Entities;
+using El_Cliente.Shared.DTOs;
 using ElCliente.Web.Repository;
 using Microsoft.AspNetCore.Components;
 using System.Net;
@@ -13,7 +13,7 @@ namespace ElCliente.Web.Pages.Customers
         private int currentPage = 1;
         private int totalPages;
 
-        private List<Customer>? Customers { get; set; }
+        private List<CustomerDTO>? Customers { get; set; }
 
         [Parameter]
         [SupplyParameterFromQuery]
@@ -35,26 +35,33 @@ namespace ElCliente.Web.Pages.Customers
                 page = Convert.ToInt32(Page);
             }
 
-            string url1 = string.Empty;
-            string url2 = string.Empty;
+            string urlPageRequest = string.Empty;
+            string urlPageTotalRequest = string.Empty;
 
             if (string.IsNullOrEmpty(Filter))
             {
-                url1 = $"api/Customers?page={page}";
-                url2 = $"api/Customers/totalPages";
+                urlPageRequest = $"api/Customers/GetCustomersByBranchIdAsync?page={page}";
+                urlPageTotalRequest = $"api/Customers/totalPages";
             }
             else
             {
-                url1 = $"api/Customers?page={page}&filter={Filter}";
-                url2 = $"api/Customers/totalPages?filter={Filter}";
+                urlPageRequest = $"api/Customers?page={page}&filter={Filter}";
+                urlPageTotalRequest = $"api/Customers/totalPages?filter={Filter}";
             }
 
             try
             {
-                var responseHppt = await _repository.Get<List<Customer>>(url1);
-                var responseHppt2 = await _repository.Get<int>(url2);
-                Customers = responseHppt.Response!;
-                totalPages = responseHppt2.Response!;
+                var urlPageResponse = await _repository.Get<List<CustomerDTO>>(urlPageRequest);
+                if (urlPageResponse.HttpResponseMessage.IsSuccessStatusCode && urlPageResponse.Response != null)
+                {
+                    Customers = urlPageResponse.Response;
+                }
+
+                var urlPageFilterResponse = await _repository.Get<int>(urlPageTotalRequest);
+                if (urlPageFilterResponse.HttpResponseMessage.IsSuccessStatusCode)
+                {
+                    totalPages = urlPageFilterResponse.Response;
+                }
             }
             catch (Exception ex)
             {

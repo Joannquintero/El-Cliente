@@ -3,7 +3,6 @@ using El_Cliente.Api.Repository.Balance;
 using El_Cliente.Api.Repository.Customer;
 using El_Cliente.Shared.DTOs;
 using El_Cliente.Shared.Responses;
-using Microsoft.AspNetCore.Mvc;
 
 namespace El_Cliente.Api.Services.Customer
 {
@@ -20,30 +19,40 @@ namespace El_Cliente.Api.Services.Customer
             _balanceRepository = balanceRepository;
         }
 
-        public async Task<Response> GetCustomersByBranchIdAsync([FromQuery] PaginationDTO pagination)
+        public async Task<List<CustomerDTO>> GetCustomersByBranchIdAsync(PaginationDTO pagination)
         {
-            Response response = new();
+            List<CustomerDTO> response = new List<CustomerDTO>();
             try
             {
                 var customersResponse = await _customerRepository.GetCustomersByBranchIdAsync(pagination);
-                List<CustomerDTO> customers = new List<CustomerDTO>();
-                customers.AddRange(
-                    (from c in customers
+                response.AddRange(
+                    (from c in customersResponse
                      select new CustomerDTO
                      {
                          Id = c.Id,
                          Name = c.Name,
+                         Surnames = c.Surnames,
                          Balances = c.Balances
                      }).ToList());
-
-                response.IsSuccess = true;
-                response.Result = customers.Cast<dynamic>().ToList();
             }
             catch (Exception ex)
             {
-                response.Message = ex.Message;
+                //response.Message = ex.Message;
             }
             return response;
+        }
+
+        public async Task<double> GetPagesAsync(PaginationDTO pagination)
+        {
+            double totalPages = 0;
+            try
+            {
+                return await _customerRepository.GetPagesdAsync(pagination);
+            }
+            catch (Exception ex)
+            {
+                return totalPages;
+            }
         }
 
         public async Task<Response> GetCustomerByIdAsync(long id)

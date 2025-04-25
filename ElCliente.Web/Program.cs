@@ -11,6 +11,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7135/") });
 builder.Services.AddScoped<IRepository, Repository>();
+
 builder.Services.AddSweetAlert2();
 builder.Services.AddMudServices();
 

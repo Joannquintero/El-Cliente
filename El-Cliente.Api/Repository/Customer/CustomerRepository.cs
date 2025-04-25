@@ -1,7 +1,6 @@
 ﻿using El_Cliente.Api.Data;
 using El_Cliente.Api.Helpers;
 using El_Cliente.Shared.DTOs;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace El_Cliente.Api.Repository.Customer
@@ -31,6 +30,18 @@ namespace El_Cliente.Api.Repository.Customer
                 .OrderBy(x => x.Name)
                 .Paginate(pagination)
                 .ToListAsync();
+        }
+
+        public async Task<double> GetPagesdAsync(PaginationDTO pagination)
+        {
+            var queryable = _context.Customers.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+
+            double count = await queryable.CountAsync();
+            return Math.Ceiling(count / pagination.RecordsNumber);
         }
 
         public async Task<Shared.Entities.Customer> GetAsync(long id)

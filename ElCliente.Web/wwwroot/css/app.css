@@ -36,6 +36,18 @@ a, .btn-link {
     color: red;
 }
 
+.spinner {
+    border: 16px solid silver;
+    border-top: 16px solid #337AB7;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 700ms linear infinite;
+    top: 40%;
+    left: 55%;
+    position: absolute;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
@@ -100,16 +112,4 @@ a, .btn-link {
 
 code {
     color: #c02d76;
-}
-
-.spinner {
-    border: 16px solid silver;
-    border-top: 16px solid #337AB7;
-    border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    animation: spin 700ms linear infinite;
-    top: 40%;
-    left: 55%;
-    position: absolute;
 }

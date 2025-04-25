@@ -1,5 +1,6 @@
 ﻿using El_Cliente.Api.Services.Customer;
 using El_Cliente.Shared.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace El_Cliente.Api.Controllers
@@ -22,6 +23,14 @@ namespace El_Cliente.Api.Controllers
         public async Task<ActionResult> GetCustomersByBranchIdAsync([FromQuery] PaginationDTO pagination)
         {
             var response = await _customerServices.GetCustomersByBranchIdAsync(pagination);
+            return Ok(response);
+        }
+
+        [HttpGet("TotalPages")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
+        {
+            var response = await _customerServices.GetPagesAsync(pagination);
             return Ok(response);
         }
 

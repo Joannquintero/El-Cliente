@@ -11,8 +11,7 @@ else
     <div class="card">
         <div class="card-header">
             <span>
-                <i class="oi oi-globe"></i> Países
-                <a class="btn btn-sm btn-primary float-end" href="/Customers/create"><i class="oi oi-plus"></i> Adicionar País</a>
+                <i class="oi oi-globe"></i> Clientes
             </span>
         </div>
         <div class="card-body">
@@ -21,8 +20,7 @@ else
                     <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar país..." @bind-value="Filter" />
                 </div>
                 <div class="mx-1">
-                    <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync"><i class="oi oi-layers" /> Filtrar</button>
-                    <button type="button" class="btn btn-outline-danger" @onclick="CleanFilterAsync"><i class="oi oi-ban" /> Limpiar</button>
+                    <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync"><i class="oi oi-layers" /> Buscar</button>
                 </div>
             </div>
 
@@ -30,14 +28,14 @@ else
                     TotalPages="totalPages"
                     SelectedPage="SelectedPageAsync" />
 
-            <GenericList MyList="Countries">
+            <GenericList MyList="Customers">
                 <Body>
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>País</th>
-                                <th style="width:220px">Estados / Departamentos</th>
-                                <th style="width:260px"></th>
+                                <th>Nombre</th>
+                                <th>Apellidos</th>
+                                <th>Monto Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,9 +49,7 @@ else
                                         @customer.Surnames
                                     </td>
                                     <td>
-                                        <a href="/Customers/details/@customer.Id" class="btn btn-info btn-sm"><i class="oi oi-list" /> Detalles</a>
-                                        <a href="/Customers/edit/@customer.Id" class="btn btn-warning btn-sm"><i class="oi oi-pencil" /> Editar</a>
-                                        <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(customer.Id))><i class="oi oi-trash" /> Borrar</button>
+                                        @customer.Amount
                                     </td>
                                 </tr>
                             }
