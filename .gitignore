@@ -398,3 +398,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/El-Cliente.Shared/EntitiesModel/Availability.cs

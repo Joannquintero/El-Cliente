@@ -1,0 +1,42 @@
+﻿using El_Cliente.Api.Data;
+using El_Cliente.Api.Helpers;
+using El_Cliente.Shared.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace El_Cliente.Api.Repository.Customer
+{
+    public class CustomerRepository : ICustomerRepository
+    {
+        private readonly DataContext _context;
+
+        public CustomerRepository(DataContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<List<Shared.Entities.Customer>> GetCustomersByBranchIdAsync([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.Customers
+                 .Include(x => x.Balances)
+                 .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+
+            return await queryable
+                .OrderBy(x => x.Name)
+                .Paginate(pagination)
+                .ToListAsync();
+        }
+
+        public async Task<Shared.Entities.Customer> CreateAsync(Shared.Entities.Customer customer)
+        {
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
+            return customer;
+        }
+    }
+}

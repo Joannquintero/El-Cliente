@@ -1,6 +1,4 @@
 ﻿using El_Cliente.Shared.Entities;
-using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
 
 namespace El_Cliente.Api.Data
 {

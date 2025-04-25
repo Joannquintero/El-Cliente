@@ -8,9 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
     <Folder Include="Enums\" />
-    <Folder Include="Responses\" />
   </ItemGroup>
 
 </Project>
