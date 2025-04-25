@@ -12,10 +12,10 @@ namespace El_Cliente.Api.Repository.Balance
             _context = dataContext;
         }
 
-        public async Task<Shared.Entities.Balance> GetByCustomerIdAsync(long id)
+        public async Task<Shared.Entities.Balance> GetByCustomerIdAsync(long customerId)
         {
             var product = await _context.Balances
-                .FirstOrDefaultAsync(x => x.CustomerId == id);
+                .FirstOrDefaultAsync(x => x.CustomerId == customerId);
             return product!;
         }
 

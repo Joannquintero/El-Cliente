@@ -2,7 +2,7 @@
 {
     public interface IBalanceRepository
     {
-        Task<Shared.Entities.Balance> GetByCustomerIdAsync(long id);
+        Task<Shared.Entities.Balance> GetByCustomerIdAsync(long customerId);
 
         Task<Shared.Entities.Balance> CreateAsync(Shared.Entities.Balance balance);
 

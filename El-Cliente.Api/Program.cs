@@ -5,7 +5,6 @@ using El_Cliente.Api.Repository.Branch;
 using El_Cliente.Api.Repository.Customer;
 using El_Cliente.Api.Repository.Product;
 using El_Cliente.Api.Repository.Registration;
-using El_Cliente.Api.Repository.Transaction;
 using El_Cliente.Api.Repository.Visit;
 using El_Cliente.Api.Services.Availability;
 using El_Cliente.Api.Services.Balance;
@@ -45,7 +44,6 @@ builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
 builder.Services.AddScoped<IBranchRepository, BranchRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
-builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IVisitRepository, VisitRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
