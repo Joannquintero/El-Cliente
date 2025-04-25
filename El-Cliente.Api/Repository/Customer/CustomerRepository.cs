@@ -19,6 +19,7 @@ namespace El_Cliente.Api.Repository.Customer
         {
             var queryable = _context.Customers
                  .Include(x => x.Balances)
+                 .Include(x => x.Registrations)
                  .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(pagination.Filter))

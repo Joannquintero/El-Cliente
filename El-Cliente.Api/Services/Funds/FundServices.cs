@@ -19,6 +19,33 @@ namespace El_Cliente.Api.Services.Funds
             _balanceRepository = balanceRepository;
         }
 
+        public async Task<Response> GetRegistrationByCustomerIdAsync(PaginationDTO pagination)
+        {
+            Response response = new();
+            try
+            {
+                var registrationResponse = await _registrationRepository.GetAsync(pagination);
+                List<Shared.Entities.Registration> registration = new List<Shared.Entities.Registration>();
+                registration.AddRange(
+                    (from c in registrationResponse
+                     select new Shared.Entities.Registration
+                     {
+                         Id = c.Id,
+                         Product = c.Product,
+                         Identifier = c.Identifier,
+                         IsActive = c.IsActive
+                     }).ToList());
+
+                response.IsSuccess = true;
+                response.Result = registration.Cast<dynamic>().ToList();
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
         public async Task<Response> OpeningAsync(RegistrationDTO registrationDTO)
         {
             Response response = new();

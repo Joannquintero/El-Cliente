@@ -15,6 +15,13 @@ namespace El_Cliente.Api.Controllers
             _fundServices = fundServices;
         }
 
+        [HttpGet(nameof(GetRegistrationsByCustomerIdAsync))]
+        public async Task<ActionResult> GetRegistrationsByCustomerIdAsync([FromQuery] PaginationDTO pagination)
+        {
+            var response = await _fundServices.GetRegistrationByCustomerIdAsync(pagination);
+            return Ok(response);
+        }
+
         [HttpPost(nameof(OpeningAsync))]
         public async Task<ActionResult> OpeningAsync(RegistrationDTO registrationDTO)
         {
