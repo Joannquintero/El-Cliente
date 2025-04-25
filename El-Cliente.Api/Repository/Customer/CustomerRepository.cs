@@ -15,7 +15,7 @@ namespace El_Cliente.Api.Repository.Customer
             _context = context;
         }
 
-        public async Task<List<Shared.Entities.Customer>> GetCustomersByBranchIdAsync([FromQuery] PaginationDTO pagination)
+        public async Task<List<Shared.Entities.Customer>> GetCustomersByBranchIdAsync(PaginationDTO pagination)
         {
             var queryable = _context.Customers
                  .Include(x => x.Balances)

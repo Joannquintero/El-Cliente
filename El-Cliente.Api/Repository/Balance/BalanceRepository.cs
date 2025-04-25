@@ -1,4 +1,5 @@
 ﻿using El_Cliente.Api.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace El_Cliente.Api.Repository.Balance
 {
@@ -9,6 +10,13 @@ namespace El_Cliente.Api.Repository.Balance
         public BalanceRepository(DataContext dataContext)
         {
             _context = dataContext;
+        }
+
+        public async Task<Shared.Entities.Balance> GetByCustomerIdAsync(long id)
+        {
+            var product = await _context.Balances
+                .FirstOrDefaultAsync(x => x.CustomerId == id);
+            return product!;
         }
 
         public async Task<Shared.Entities.Balance> CreateAsync(Shared.Entities.Balance balance)

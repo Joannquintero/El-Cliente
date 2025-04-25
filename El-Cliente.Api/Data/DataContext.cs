@@ -15,7 +15,6 @@ namespace El_Cliente.Api.Data
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Registration> Registrations { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Visit> Visits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,7 +23,6 @@ namespace El_Cliente.Api.Data
             modelBuilder.Entity<Branch>().HasIndex(x => x.Name).IsUnique();
             modelBuilder.Entity<Product>().HasIndex(x => x.Name).IsUnique();
             modelBuilder.Entity<Registration>().HasIndex(x => x.Identifier).IsUnique();
-            modelBuilder.Entity<Transaction>().HasIndex(x => x.Identifier).IsUnique();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace El_Cliente.Api.Repository.Availability
             _context = dataContext;
         }
 
-        public async Task<List<Shared.Entities.Availability>> GetAvailabilityProductsByBranchIdAsync([FromQuery] PaginationDTO pagination)
+        public async Task<List<Shared.Entities.Availability>> GetAvailabilityProductsByBranchIdAsync(PaginationDTO pagination)
         {
             var queryable = _context.Availability
                  .Include(x => x.Product)

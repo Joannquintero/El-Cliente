@@ -52,11 +52,11 @@ namespace El_Cliente.Api.Services.Funds
             try
             {
                 var entity = ConvertsExtensions.ConvertToEntity<RegistrationDTO, Shared.Entities.Registration>(registrationDTO);
-                var customersResponse = await _registrationRepository.CreateAsync(entity);
-                //var BalanceResponse = await _balanceRepository.UpdateAsync(new Shared.Entities.Balance { Customer = customersResponse, Amount = customerDTO.Amount });
-                // transaccion
+                var registrationResponse = await _registrationRepository.CreateAsync(entity);
+                var balance = await _balanceRepository.GetByCustomerIdAsync(registrationDTO.CustomerId);
+                var BalanceResponse = await _balanceRepository.UpdateAsync(balance);
                 response.IsSuccess = true;
-                response.Result = customersResponse;
+                response.Result = registrationResponse;
             }
             catch (Exception ex)
             {
@@ -71,10 +71,11 @@ namespace El_Cliente.Api.Services.Funds
             try
             {
                 var entity = ConvertsExtensions.ConvertToEntity<RegistrationDTO, Shared.Entities.Registration>(registrationDTO);
-                var customersResponse = await _registrationRepository.UpdateAsync(entity);
-                //var BalanceResponse = await _balanceRepository.CreateAsync(new Shared.Entities.Balance { Customer = customersResponse, Amount = customerDTO.Amount });
+                var registrationResponse = await _registrationRepository.UpdateAsync(entity);
+                var balance = await _balanceRepository.GetByCustomerIdAsync(registrationDTO.CustomerId);
+                var BalanceResponse = await _balanceRepository.UpdateAsync(balance);
                 response.IsSuccess = true;
-                response.Result = registrationDTO;
+                response.Result = registrationResponse;
             }
             catch (Exception ex)
             {

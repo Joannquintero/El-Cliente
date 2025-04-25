@@ -1,7 +1,6 @@
 ﻿using El_Cliente.Api.Repository.Availability;
 using El_Cliente.Shared.DTOs;
 using El_Cliente.Shared.Responses;
-using Microsoft.AspNetCore.Mvc;
 
 namespace El_Cliente.Api.Services.Availability
 {
@@ -14,7 +13,7 @@ namespace El_Cliente.Api.Services.Availability
             _availabilityRepository = availabilityRepository;
         }
 
-        public async Task<Response> GetAvailabilityProductsByBranchIdAsync([FromQuery] PaginationDTO pagination)
+        public async Task<Response> GetAvailabilityProductsByBranchIdAsync(PaginationDTO pagination)
         {
             Response response = new();
             try

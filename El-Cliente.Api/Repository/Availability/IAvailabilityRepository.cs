@@ -5,6 +5,6 @@ namespace El_Cliente.Api.Repository.Availability
 {
     public interface IAvailabilityRepository
     {
-        Task<List<Shared.Entities.Availability>> GetAvailabilityProductsByBranchIdAsync([FromQuery] PaginationDTO pagination);
+        Task<List<Shared.Entities.Availability>> GetAvailabilityProductsByBranchIdAsync(PaginationDTO pagination);
     }
 }

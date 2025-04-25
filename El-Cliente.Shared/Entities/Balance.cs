@@ -16,7 +16,5 @@ namespace El_Cliente.Shared.Entities
         [Display(Name = "Saldo")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public decimal Amount { get; set; }
-
-        public ICollection<Transaction>? Transactions { get; set; }
     }
 }

@@ -1,11 +1,10 @@
 ﻿using El_Cliente.Shared.DTOs;
-using Microsoft.AspNetCore.Mvc;
 
 namespace El_Cliente.Api.Repository.Customer
 {
     public interface ICustomerRepository
     {
-        Task<List<Shared.Entities.Customer>> GetCustomersByBranchIdAsync([FromQuery] PaginationDTO pagination);
+        Task<List<Shared.Entities.Customer>> GetCustomersByBranchIdAsync(PaginationDTO pagination);
 
         Task<Shared.Entities.Customer> GetAsync(long id);
 
