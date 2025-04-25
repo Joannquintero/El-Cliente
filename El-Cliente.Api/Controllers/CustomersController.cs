@@ -1,11 +1,10 @@
 ﻿using El_Cliente.Api.Services.Customer;
 using El_Cliente.Shared.DTOs;
-using El_Cliente.Shared.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace El_Cliente.Api.Controllers
 {
-    [Route("/api/customers")]
+    [Route("api/[controller]")]
     public class CustomersController : ControllerBase
     {
         private readonly ICustomerServices _customerServices;
@@ -18,14 +17,14 @@ namespace El_Cliente.Api.Controllers
         [HttpGet]
         public async Task<ActionResult> GetCustomersByBranchIdAsync([FromQuery] PaginationDTO pagination)
         {
-            Response response = await _customerServices.GetCustomersByBranchIdAsync(pagination);
+            var response = await _customerServices.GetCustomersByBranchIdAsync(pagination);
             return Ok(response);
         }
 
         [HttpPost]
         public async Task<ActionResult> CreateAsync(CustomerDTO customerDTO)
         {
-            Response response = await _customerServices.CreateAsync(customerDTO);
+            var response = await _customerServices.CreateAsync(customerDTO);
             return Ok(response);
         }
     }
