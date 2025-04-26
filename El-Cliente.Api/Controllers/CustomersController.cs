@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace El_Cliente.Api.Controllers
 {
     [Route("api/[controller]")]
+    [ApiController]
     public class CustomersController : ControllerBase
     {
         private readonly ILogger<CustomersController> logger;

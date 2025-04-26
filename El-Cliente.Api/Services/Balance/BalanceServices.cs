@@ -1,16 +1,19 @@
 ﻿using El_Cliente.Api.Helpers;
 using El_Cliente.Api.Repository.Balance;
 using El_Cliente.Shared.DTOs;
-using El_Cliente.Shared.Responses;
 
 namespace El_Cliente.Api.Services.Balance
 {
     public class BalanceServices : IBalanceServices
     {
+        private readonly ILogger<BalanceServices> _logger;
         private readonly IBalanceRepository _balanceRepository;
 
-        public BalanceServices(IBalanceRepository balanceRepository)
+        public BalanceServices(
+            ILogger<BalanceServices> logger,
+            IBalanceRepository balanceRepository)
         {
+            _logger = logger;
             _balanceRepository = balanceRepository;
         }
 
@@ -20,40 +23,33 @@ namespace El_Cliente.Api.Services.Balance
             return balance!;
         }
 
-        public async Task<Response> CreateAsync(BalanceDTO balanceDTO)
+        public async Task<BalanceDTO> CreateAsync(BalanceDTO balanceDTO)
         {
-            Response response = new();
             try
             {
                 var entity = ConvertsExtensions.ConvertToEntity<BalanceDTO, Shared.Entities.Balance>(balanceDTO);
-                await _balanceRepository.CreateAsync(entity);
-
-                response.IsSuccess = true;
-                response.Result = balanceDTO;
+                var balanceResponse = await _balanceRepository.CreateAsync(entity);
+                balanceDTO.Id = balanceResponse.Id;
             }
             catch (Exception ex)
             {
-                response.Message = ex.Message;
+                _logger.LogError(ex.Message);
             }
-            return response;
+            return balanceDTO;
         }
 
-        public async Task<Response> UpdateAsync(BalanceDTO balanceDTO)
+        public async Task<BalanceDTO> UpdateAsync(BalanceDTO balanceDTO)
         {
-            Response response = new();
             try
             {
                 var entity = ConvertsExtensions.ConvertToEntity<BalanceDTO, Shared.Entities.Balance>(balanceDTO);
                 await _balanceRepository.UpdateAsync(entity);
-
-                response.IsSuccess = true;
-                response.Result = balanceDTO;
             }
             catch (Exception ex)
             {
-                response.Message = ex.Message;
+                _logger.LogError(ex.Message);
             }
-            return response;
+            return balanceDTO;
         }
     }
 }

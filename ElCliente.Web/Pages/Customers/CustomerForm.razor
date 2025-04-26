@@ -1,0 +1,145 @@
+﻿@inject SweetAlertService sweetAlertService
+
+<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
+
+<div class="row">
+    <div class="col-md-4  offset-md-4">
+
+        <EditForm EditContext="editContext" OnValidSubmit="OnDataAnnotationsValidatedAsync">
+            <DataAnnotationsValidator />
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <span>
+                                <i class="oi oi-star" /> Registro de nuevo usuario
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label>Nombre:</label>
+                                        <div>
+                                            <InputText class="form-control" @bind-Value="@CustomerDTO.Name" />
+                                            <ValidationMessage For="@(() => CustomerDTO.Name)" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Apellidos:</label>
+                                        <div>
+                                            <InputText class="form-control" @bind-Value="@CustomerDTO.Surnames" />
+                                            <ValidationMessage For="@(() => CustomerDTO.Surnames)" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Ciudad:</label>
+                                        <div>
+                                            <InputText class="form-control" @bind-Value="@CustomerDTO.City" />
+                                            <ValidationMessage For="@(() => CustomerDTO.Name)" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Correo electrónico:</label>
+                                        <div>
+                                            <InputText class="form-control" @bind-Value="@CustomerDTO.Email" />
+                                            <ValidationMessage For="@(() => CustomerDTO.Email)" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Teléfono:</label>
+                                        <div>
+                                            <InputText class="form-control" @bind-Value="@CustomerDTO.Phone" />
+                                            <ValidationMessage For="@(() => CustomerDTO.Phone)" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <MudCheckBox @bind-Value="EmailCheck" Label="Deseo recibir notificaciones por correo electrónico." Color="Color.Primary"></MudCheckBox>
+                                        <MudCheckBox @bind-Value="SMSCheck" Label="Deseo recibir notificaciones por mensajes de texto." Color="Color.Primary"></MudCheckBox>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary float-end" type="submit">Continuar</button>
+                            <button class="btn btn-secondary float-end mx-2" @onclick="ReturnAction">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+
+    </div>
+</div>
+
+@code {
+    private EditContext editContext = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public CustomerDTO CustomerDTO { get; set; } = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback OnValidSubmit { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback ReturnAction { get; set; }
+
+    public bool FormPostedSuccessfully { get; set; }
+
+    public bool EmailCheck { get; set; } = false;
+
+    public bool SMSCheck { get; set; } = false;
+
+    protected override void OnInitialized()
+    {
+        editContext = new(CustomerDTO);
+    }
+
+    private async Task OnDataAnnotationsValidatedAsync()
+    {
+        if (EmailCheck && string.IsNullOrEmpty(CustomerDTO.Email))
+        {
+            await sweetAlertService.FireAsync("Indique el correo electrónico.", null, SweetAlertIcon.Error);
+            return;
+        }
+
+        if (SMSCheck && string.IsNullOrEmpty(CustomerDTO.Phone))
+        {
+            await sweetAlertService.FireAsync("Indique el número de teléfono.", null, SweetAlertIcon.Error);
+            return;
+        }
+
+        CustomerDTO.EmailCheck = EmailCheck;
+        CustomerDTO.SMSCheck = SMSCheck;
+        await OnValidSubmit.InvokeAsync();
+    }
+
+    private async Task OnBeforeInternalNavigation(LocationChangingContext context)
+    {
+        var formWasMofied = editContext.IsModified();
+        if (!formWasMofied || FormPostedSuccessfully)
+        {
+            return;
+        }
+
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+        {
+            Title = "Confirmación",
+            Text = "¿Deseas abandonar la página y perder los cambios?",
+            Icon = SweetAlertIcon.Question,
+            ShowCancelButton = true,
+            CancelButtonText = "No",
+            ConfirmButtonText = "Si"
+        });
+
+        var confirm = !string.IsNullOrEmpty(result.Value);
+        if (confirm)
+        {
+            return;
+        }
+
+        context.PreventNavigation();
+    }
+}

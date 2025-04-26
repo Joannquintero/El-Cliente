@@ -1,5 +1,4 @@
 ﻿using El_Cliente.Shared.DTOs;
-using El_Cliente.Shared.Responses;
 
 namespace El_Cliente.Api.Services.Customer
 {
@@ -9,8 +8,8 @@ namespace El_Cliente.Api.Services.Customer
 
         Task<double> GetPagesAsync(PaginationDTO pagination);
 
-        Task<Response> GetCustomerByIdAsync(long id);
+        Task<CustomerDTO> GetCustomerByIdAsync(long id);
 
-        Task<Response> CreateAsync(CustomerDTO customerDTO);
+        Task<CustomerDTO> CreateAsync(CustomerDTO customerDTO);
     }
 }

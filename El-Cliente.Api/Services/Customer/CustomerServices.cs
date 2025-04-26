@@ -2,19 +2,21 @@
 using El_Cliente.Api.Repository.Balance;
 using El_Cliente.Api.Repository.Customer;
 using El_Cliente.Shared.DTOs;
-using El_Cliente.Shared.Responses;
 
 namespace El_Cliente.Api.Services.Customer
 {
     public class CustomerServices : ICustomerServices
     {
+        private readonly ILogger<CustomerServices> _logger;
         private readonly ICustomerRepository _customerRepository;
         private readonly IBalanceRepository _balanceRepository;
 
         public CustomerServices(
+            ILogger<CustomerServices> logger,
             ICustomerRepository customerRepository,
             IBalanceRepository balanceRepository)
         {
+            _logger = logger;
             _customerRepository = customerRepository;
             _balanceRepository = balanceRepository;
         }
@@ -32,12 +34,12 @@ namespace El_Cliente.Api.Services.Customer
                          Id = c.Id,
                          Name = c.Name,
                          Surnames = c.Surnames,
-                         Balances = c.Balances
+                         //Balances = c.Balances
                      }).ToList());
             }
             catch (Exception ex)
             {
-                //response.Message = ex.Message;
+                _logger.LogError(ex.Message);
             }
             return response;
         }
@@ -51,42 +53,39 @@ namespace El_Cliente.Api.Services.Customer
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return totalPages;
             }
         }
 
-        public async Task<Response> GetCustomerByIdAsync(long id)
+        public async Task<CustomerDTO> GetCustomerByIdAsync(long id)
         {
-            Response response = new();
+            CustomerDTO? response = null;
             try
             {
                 var customerResponse = await _customerRepository.GetAsync(id);
-                response.IsSuccess = true;
-                response.Result = customerResponse;
+                response = ConvertsExtensions.ConvertToEntity<Shared.Entities.Customer, CustomerDTO>(customerResponse);
             }
             catch (Exception ex)
             {
-                response.Message = ex.Message;
+                _logger.LogError(ex.Message);
             }
-            return response;
+            return response!;
         }
 
-        public async Task<Response> CreateAsync(CustomerDTO customerDTO)
+        public async Task<CustomerDTO> CreateAsync(CustomerDTO customerDTO)
         {
-            Response response = new();
             try
             {
-                var entity = ConvertsExtensions.ConvertToEntity<CustomerDTO, Shared.Entities.Customer>(customerDTO);
-                var customersResponse = await _customerRepository.CreateAsync(entity);
-                var BalanceResponse = await _balanceRepository.CreateAsync(new Shared.Entities.Balance { Customer = customersResponse, Amount = customerDTO.Amount });
-                response.IsSuccess = true;
-                response.Result = customerDTO;
+                var entityCustomer = ConvertsExtensions.ConvertToEntity<CustomerDTO, Shared.Entities.Customer>(customerDTO);
+                var customersResponse = await _customerRepository.CreateAsync(entityCustomer);
+                customerDTO.Id = customersResponse.Id;
             }
             catch (Exception ex)
             {
-                response.Message = ex.Message;
+                _logger.LogError(ex.Message);
             }
-            return response;
+            return customerDTO;
         }
     }
 }

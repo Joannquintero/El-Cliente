@@ -16,6 +16,7 @@ namespace El_Cliente.Api.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Registration> Registrations { get; set; }
         public DbSet<Visit> Visits { get; set; }
+        public DbSet<CustomerContact> CustomerContacts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

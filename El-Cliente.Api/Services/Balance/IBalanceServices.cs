@@ -1,5 +1,4 @@
 ﻿using El_Cliente.Shared.DTOs;
-using El_Cliente.Shared.Responses;
 
 namespace El_Cliente.Api.Services.Balance
 {
@@ -7,8 +6,8 @@ namespace El_Cliente.Api.Services.Balance
     {
         Task<Shared.Entities.Balance> GetByCustomerIdAsync(long customerId);
 
-        Task<Response> CreateAsync(BalanceDTO balanceDTO);
+        Task<BalanceDTO> CreateAsync(BalanceDTO balanceDTO);
 
-        Task<Response> UpdateAsync(BalanceDTO balanceDTO);
+        Task<BalanceDTO> UpdateAsync(BalanceDTO balanceDTO);
     }
 }

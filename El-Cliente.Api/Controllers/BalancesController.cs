@@ -1,6 +1,5 @@
 ﻿using El_Cliente.Api.Services.Balance;
 using El_Cliente.Shared.DTOs;
-using El_Cliente.Shared.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace El_Cliente.Api.Controllers
@@ -24,37 +23,17 @@ namespace El_Cliente.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<Response> CreateAsync(BalanceDTO balanceDTO)
+        public async Task<ActionResult> CreateAsync(BalanceDTO balanceDTO)
         {
-            Response response = new();
-            try
-            {
-                var BalanceResponse = await _balanceServices.CreateAsync(balanceDTO);
-                response.IsSuccess = true;
-                response.Result = BalanceResponse;
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-            }
-            return response;
+            var response = await _balanceServices.CreateAsync(balanceDTO);
+            return Ok(response);
         }
 
         [HttpPut]
-        public async Task<Response> UpdateAsync(BalanceDTO balanceDTO)
+        public async Task<ActionResult> UpdateAsync(BalanceDTO balanceDTO)
         {
-            Response response = new();
-            try
-            {
-                var customersResponse = await _balanceServices.UpdateAsync(balanceDTO);
-                response.IsSuccess = true;
-                response.Result = customersResponse;
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-            }
-            return response;
+            var response = await _balanceServices.UpdateAsync(balanceDTO);
+            return Ok(response);
         }
     }
 }

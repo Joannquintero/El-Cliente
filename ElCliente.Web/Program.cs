@@ -1,3 +1,4 @@
+using Blazored.Modal;
 using CurrieTechnologies.Razor.SweetAlert2;
 using ElCliente.Web;
 using ElCliente.Web.Repository;
@@ -13,6 +14,7 @@ builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri("http
 builder.Services.AddScoped<IRepository, Repository>();
 
 builder.Services.AddSweetAlert2();
+builder.Services.AddBlazoredModal();
 builder.Services.AddMudServices();
 
 await builder.Build().RunAsync();
