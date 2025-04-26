@@ -1,16 +1,55 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+<MudThemeProvider Theme="_currentTheme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="0">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(e => DrawerToggle())" />
+        <MudIconButton id="button-bar" hidden Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(e => DrawerToggleHidden())" />
+        <MudSpacer />
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
+        <div class="sidebar">
+            <NavMenu />
         </div>
-
-        <article class="content px-4">
+    </MudDrawer>
+    <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="my-8">
             @Body
-        </article>
-    </main>
-</div>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+<script type="text/javascript">
+    window.dotNetToJsBlazor = {
+        hideMenuBar: function () {
+            var menuBar = document.getElementById('button-bar');
+            menuBar.click();
+        }
+    };
+</script>
+
+@code {
+    bool _drawerOpen = true;
+
+    private readonly MudTheme _currentTheme = new()
+    {
+        PaletteLight = new PaletteLight
+        {
+            Primary = "#0A7BCF",
+            Secondary = "#4CAF50",
+            Info = "#64a7e2",
+            Success = "#2ECC40",
+            Warning = "#FFC107",
+            Error = "#FF0000",
+            AppbarBackground = "#212121"
+        }
+    };
+
+    void DrawerToggle() => _drawerOpen = !_drawerOpen;
+    void DrawerToggleHidden() => _drawerOpen = false;
+}

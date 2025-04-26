@@ -1,0 +1,78 @@
+﻿@page "/registration/create"
+@using El_Cliente.Shared.Entities
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+<RegistrationsForm @ref="registrationsForm" RegistrationDTO="registrationDTO" Branchs="brands" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+
+@code {
+    private RegistrationDTO registrationDTO = new();
+    private CustomerContactDTO customerContactDTO = new();
+    private BalanceDTO balanceDTO = new();
+    private RegistrationsForm? registrationsForm;
+    private List<BranchDTO> brands = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        var httpResponse = await repository.Get<List<BranchDTO>>("/api/Branchs");
+        foreach (var brand in httpResponse!.Response!)
+        {
+            brands.Add(new BranchDTO { Id = brand.Id, Name = brand.Name });
+        }   
+    }
+
+    private async Task CreateAsync()
+    {
+        var customersResponse = await repository.Post<RegistrationDTO, RegistrationDTO>("/api/Customers", registrationDTO);
+        // customerDTO.Id = customersResponse.Response!.Id;
+        // if (customersResponse.Error)
+        // {
+        //     var message = await customersResponse.GetErrorMessageAsync();
+        //     await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+        //     return;
+        // }
+
+        // if (!string.IsNullOrEmpty(customerDTO.Email))
+        // {
+        //     customerContactDTO.Type = ContactTypeEnum.EMAIL.ToString();
+        //     customerContactDTO.Value = customerDTO.Email;
+        //     customerContactDTO.Notify = customerDTO.EmailCheck ? true : null;
+        // }
+
+        // if (!string.IsNullOrEmpty(customerDTO.Phone))
+        // {
+        //     customerContactDTO.Type = ContactTypeEnum.PHONE.ToString();
+        //     customerContactDTO.Value = customerDTO.Phone;
+        //     customerContactDTO.Notify = customerDTO.SMSCheck ? true : null;
+        // }
+
+        // customerContactDTO.CustomerId = customerDTO.Id;
+        // var customerContactResponse = await repository.Post("/api/CustomerContact", customerContactDTO);
+        // if (customerContactResponse.Error)
+        // {
+        //     var message = await customerContactResponse.GetErrorMessageAsync();
+        //     await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+        //     return;
+        // }
+
+        // // Se posee un monto inicial de COP $500.000.
+        // balanceDTO.Amount = 500000;
+        // balanceDTO.CustomerId = customerDTO.Id;
+        // var balancesResponse = await repository.Post("/api/Balances", balanceDTO);
+        // if (balancesResponse.Error)
+        // {
+        //     var message = await balancesResponse.GetErrorMessageAsync();
+        //     await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+        //     return;
+        // }
+
+        Return();
+    }
+
+    private void Return()
+    {
+        registrationsForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo($"/dashboard");
+    }
+}

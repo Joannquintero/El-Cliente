@@ -2,5 +2,6 @@
 {
     public interface IBranchRepository
     {
+        Task<List<Shared.Entities.Branch>> GetAsync();
     }
 }

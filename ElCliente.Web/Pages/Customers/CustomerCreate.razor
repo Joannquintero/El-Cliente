@@ -14,7 +14,6 @@
 
     private async Task CreateAsync()
     {
-        // var customersResponse = await repository.Post("/api/Customers", customerDTO);
         var customersResponse = await repository.Post<CustomerDTO, CustomerDTO>("/api/Customers", customerDTO);
         customerDTO.Id = customersResponse.Response!.Id;
         if (customersResponse.Error)
@@ -58,7 +57,8 @@
             return;
         }
 
-        Return();
+        customerForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo($"/dashboard");
     }
 
     private void Return()

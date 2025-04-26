@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using El_Cliente.Api.Services.Branch;
+using El_Cliente.Shared.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace El_Cliente.Api.Controllers
 {
@@ -6,8 +8,18 @@ namespace El_Cliente.Api.Controllers
     [ApiController]
     public class BranchsController : ControllerBase
     {
-        public BranchsController()
+        private readonly IBranchServices _branchServices;
+
+        public BranchsController(IBranchServices branchServices)
         {
+            _branchServices = branchServices;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetAsync()
+        {
+            var response = await _branchServices.GetAsync();
+            return Ok(response);
         }
     }
 }

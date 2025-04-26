@@ -1,0 +1,137 @@
+﻿@using El_Cliente.Shared.Entities
+@inject SweetAlertService sweetAlertService
+
+<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
+
+<div class="row">
+    <div class="col-md-4  offset-md-4">
+
+        <EditForm EditContext="editContext" OnValidSubmit="OnDataAnnotationsValidatedAsync">
+            <DataAnnotationsValidator />
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <span>
+                                <i class="oi oi-star" /> Nueva Aperturas
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <div class="mb-0">
+                                            <label>Sucursal:</label>
+                                            <MudSelect T="BranchDTO" @bind-Value="brand" ToStringFunc="@converter" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" @bind-Value:after="OnValueChanged">
+                                                <MudSelectItem Value="@(new BranchDTO() { Id = 0, Name = "Seleccione" })">@((MarkupString)"Seleccione")</MudSelectItem>
+                                                @foreach (var brand in Branchs!)
+                                                {
+                                                    <MudSelectItem T="BranchDTO" Value="@brand">@brand.Name</MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <div class="mb-0">
+                                            <label>Producto:</label>
+                                            <MudSelect T="ProductDTO" @bind-Value="Product" ToStringFunc="@converterProduct" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                                                <MudSelectItem Value="@(new ProductDTO() { Id = 0, Name = "Seleccione" })">@((MarkupString)"Seleccione")</MudSelectItem>
+                                                @foreach (var prod in Products!)
+                                                {
+                                                    <MudSelectItem T="ProductDTO" Value="@prod">@prod.Name</MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary float-end" type="submit">Guardar</button>
+                            <button class="btn btn-secondary float-end mx-2" @onclick="ReturnAction">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+
+    </div>
+</div>
+
+@code {
+    private EditContext editContext = null!;
+
+    Func<BranchDTO, string> converter = p => p?.Name;
+
+    Func<BranchDTO, string> converterProduct = p => p?.Name;
+
+    [Parameter]
+    [EditorRequired]
+    public RegistrationDTO RegistrationDTO { get; set; } = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback OnValidSubmit { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback ReturnAction { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public List<BranchDTO> Branchs { get; set; } = new();
+
+    // [Parameter]
+    // [EditorRequired]
+    public List<ProductDTO> Products { get; set; } = new();
+
+    public bool FormPostedSuccessfully { get; set; }
+
+
+    public BranchDTO brand { get; set; } = new BranchDTO { Id = 0, Name = "Seleccione" };
+
+    public ProductDTO Product { get; set; } = new ProductDTO { Id = 0, Name = "Seleccione" };
+
+    protected override void OnInitialized()
+    {
+        editContext = new(RegistrationDTO);
+    }
+
+    private async Task OnDataAnnotationsValidatedAsync()
+    {
+        await OnValidSubmit.InvokeAsync();
+    }
+
+    private async void OnValueChanged()
+    {
+        var kdkd = brand;
+    }
+
+    private async Task OnBeforeInternalNavigation(LocationChangingContext context)
+    {
+        var formWasMofied = editContext.IsModified();
+        if (!formWasMofied || FormPostedSuccessfully)
+        {
+            return;
+        }
+
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+        {
+            Title = "Confirmación",
+            Text = "¿Deseas abandonar la página y perder los cambios?",
+            Icon = SweetAlertIcon.Question,
+            ShowCancelButton = true,
+            CancelButtonText = "No",
+            ConfirmButtonText = "Si"
+        });
+
+        var confirm = !string.IsNullOrEmpty(result.Value);
+        if (confirm)
+        {
+            return;
+        }
+
+        context.PreventNavigation();
+    }
+}
