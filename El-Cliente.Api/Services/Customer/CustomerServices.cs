@@ -34,7 +34,7 @@ namespace El_Cliente.Api.Services.Customer
                          Id = c.Id,
                          Name = c.Name,
                          Surnames = c.Surnames,
-                         //Balances = c.Balances
+                         Balances = c.Balances
                      }).ToList());
             }
             catch (Exception ex)

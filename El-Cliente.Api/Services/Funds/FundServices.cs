@@ -1,5 +1,6 @@
 ﻿using El_Cliente.Api.Helpers;
 using El_Cliente.Api.Repository.Balance;
+using El_Cliente.Api.Repository.Product;
 using El_Cliente.Api.Repository.Registration;
 using El_Cliente.Shared.DTOs;
 using El_Cliente.Shared.Responses;
@@ -8,84 +9,83 @@ namespace El_Cliente.Api.Services.Funds
 {
     public class FundServices : IFundServices
     {
+        private readonly ILogger<FundServices> _logger;
         private readonly IRegistrationRepository _registrationRepository;
+        private readonly IProductRepository _productRepository;
         private readonly IBalanceRepository _balanceRepository;
 
         public FundServices(
+            ILogger<FundServices> logger,
             IRegistrationRepository registrationRepository,
+            IProductRepository productRepository,
             IBalanceRepository balanceRepository)
         {
+            _logger = logger;
             _registrationRepository = registrationRepository;
+            _productRepository = productRepository;
             _balanceRepository = balanceRepository;
         }
 
-        public async Task<Response> GetRegistrationByCustomerIdAsync(PaginationDTO pagination)
+        public async Task<List<RegistrationDTO>> GetRegistrationByCustomerIdAsync(long customerId)
         {
-            Response response = new();
+            List<RegistrationDTO> response = new List<RegistrationDTO>();
             try
             {
-                var registrationResponse = await _registrationRepository.GetAsync(pagination);
-                List<Shared.Entities.Registration> registration = new List<Shared.Entities.Registration>();
-                registration.AddRange(
+                var registrationResponse = await _registrationRepository.GetAsync(customerId);
+                response.AddRange(
                     (from c in registrationResponse
-                     select new Shared.Entities.Registration
+                     select new RegistrationDTO
                      {
                          Id = c.Id,
                          Product = c.Product,
                          Identifier = c.Identifier,
                          IsActive = c.IsActive
                      }).ToList());
-
-                response.IsSuccess = true;
-                response.Result = registration.Cast<dynamic>().ToList();
             }
             catch (Exception ex)
             {
-                response.Message = ex.Message;
+                _logger.LogError(ex.Message);
             }
             return response;
         }
 
-        public async Task<Response> OpeningAsync(RegistrationDTO registrationDTO)
+        public async Task<RegistrationDTO> OpeningAsync(RegistrationDTO registrationDTO)
         {
-            Response response = new();
             try
             {
                 var entity = ConvertsExtensions.ConvertToEntity<RegistrationDTO, Shared.Entities.Registration>(registrationDTO);
+                entity.IsActive = true;
                 var registrationResponse = await _registrationRepository.CreateAsync(entity);
+                registrationDTO.Id = registrationResponse.Id;
                 var balance = await _balanceRepository.GetByCustomerIdAsync(registrationDTO.CustomerId);
-                // consultar producto para restar saldo
-                balance.Amount -= 100;
+                var product = _productRepository.GetAsync(registrationDTO.ProductId);
+                balance.Amount -= product.Result.MinimumAmount;
                 var BalanceResponse = await _balanceRepository.UpdateAsync(balance);
-                response.IsSuccess = true;
-                response.Result = registrationResponse;
             }
             catch (Exception ex)
             {
-                response.Message = ex.Message;
+                _logger.LogError(ex.Message);
             }
-            return response;
+            return registrationDTO;
         }
 
-        public async Task<Response> CancellationsAsync(RegistrationDTO registrationDTO)
+        public async Task<RegistrationDTO> CancellationsAsync(RegistrationDTO registrationDTO)
         {
-            Response response = new();
             try
             {
-                var entity = ConvertsExtensions.ConvertToEntity<RegistrationDTO, Shared.Entities.Registration>(registrationDTO);
-                var registrationResponse = await _registrationRepository.UpdateAsync(entity);
+                var registration = await _registrationRepository.GetByIdAsync(registrationDTO.Id);
+                registration.IsActive = false;
+                var registrationResponse = await _registrationRepository.UpdateAsync(registration);
                 var balance = await _balanceRepository.GetByCustomerIdAsync(registrationDTO.CustomerId);
-                // consultar producto para regresar saldo
-                balance.Amount += 100;
+                var product = _productRepository.GetAsync(registrationDTO.ProductId);
+                balance.Amount += product.Result.MinimumAmount; ;
                 var BalanceResponse = await _balanceRepository.UpdateAsync(balance);
-                response.IsSuccess = true;
-                response.Result = registrationResponse;
             }
             catch (Exception ex)
             {
-                response.Message = ex.Message;
+                _logger.LogError(ex.Message);
             }
-            return response;
+            return registrationDTO;
         }
     }
 }

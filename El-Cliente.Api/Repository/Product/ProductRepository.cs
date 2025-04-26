@@ -24,15 +24,12 @@ namespace El_Cliente.Api.Repository.Product
             List<Shared.Entities.Product> response = new();
             List<Shared.Entities.Availability> availability = await _context.Availability
                   .Where(x => x.BranchId == branchId)
+                  .Include(x => x.Product)
                   .ToListAsync();
 
             foreach (var ava in availability)
             {
-                var product = _context.Products.FirstOrDefaultAsync(x => x.Id == ava.ProductId);
-                if (product != null)
-                {
-                    response.Add(product.Result!);
-                }
+                response.Add(ava.Product);
             }
             return response!;
         }

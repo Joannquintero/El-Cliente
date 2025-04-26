@@ -16,9 +16,9 @@ namespace El_Cliente.Api.Controllers
         }
 
         [HttpGet(nameof(GetRegistrationsByCustomerIdAsync))]
-        public async Task<ActionResult> GetRegistrationsByCustomerIdAsync([FromQuery] PaginationDTO pagination)
+        public async Task<ActionResult> GetRegistrationsByCustomerIdAsync(long customerId)
         {
-            var response = await _fundServices.GetRegistrationByCustomerIdAsync(pagination);
+            var response = await _fundServices.GetRegistrationByCustomerIdAsync(customerId);
             return Ok(response);
         }
 

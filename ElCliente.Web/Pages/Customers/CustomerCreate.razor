@@ -1,4 +1,4 @@
-﻿@page "/customer/create"
+﻿@page "/"
 @using El_Cliente.Shared.Entities
 @inject IRepository repository
 @inject NavigationManager navigationManager
@@ -58,7 +58,7 @@
         }
 
         customerForm!.FormPostedSuccessfully = true;
-        navigationManager.NavigateTo($"/dashboard");
+        navigationManager.NavigateTo($"/dashboard/{customerDTO.Id}");
     }
 
     private void Return()

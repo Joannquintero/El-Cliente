@@ -6,8 +6,6 @@
 
         public Customer Customer { get; set; } = null!;
 
-        //public long CustomerId { get; set; }
-
         public string Type { get; set; } = null!;
 
         public string Value { get; set; } = null!;

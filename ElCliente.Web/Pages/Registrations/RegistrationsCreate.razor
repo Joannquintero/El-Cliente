@@ -1,4 +1,4 @@
-﻿@page "/registration/create"
+﻿@page "/registration/create/{CustomerId:int}"
 @using El_Cliente.Shared.Entities
 @inject IRepository repository
 @inject NavigationManager navigationManager
@@ -12,7 +12,9 @@
     private BalanceDTO balanceDTO = new();
     private RegistrationsForm? registrationsForm;
     private List<BranchDTO> brands = new();
-    private decimal AmountCustomer = 500000;
+
+    [Parameter]
+    public int CustomerId { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
@@ -25,16 +27,17 @@
 
     private async Task CreateAsync()
     {
-        registrationDTO.CustomerId = 1;
-        var productResponse = await repository.Get<ProductDTO>($"api/Products/GetByIdAsync?id={registrationDTO.ProductId}");
-        if (AmountCustomer < productResponse.Response!.MinimumAmount)
+        registrationDTO.CustomerId = CustomerId;
+        var balanceResponse = await repository.Get<BalanceDTO>($"api/Balances/GetByCustomerIdAsync?customerId={registrationDTO.CustomerId}");
+        var productResponse = await repository.Get<ProductDTO>($"api/Products/{registrationDTO.ProductId}");
+        if (balanceResponse.Response!.Amount < productResponse.Response!.MinimumAmount)
         {
             await sweetAlertService.FireAsync($"No tiene saldo disponible para vincularse al fondo {productResponse.Response.Name}", null, SweetAlertIcon.Error);
             return;
         }
 
-        var registrationResponse = await repository.Post<RegistrationDTO, RegistrationDTO>("/api/Funds", registrationDTO);
-        registrationDTO.Id = registrationResponse.Response!.Id;
+        registrationDTO.Identifier = Guid.NewGuid().ToString();
+        var registrationResponse = await repository.Post<RegistrationDTO, RegistrationDTO>("api/Funds/OpeningAsync", registrationDTO);
         if (registrationResponse.Error)
         {
             var message = await registrationResponse.GetErrorMessageAsync();
@@ -42,7 +45,8 @@
             return;
         }
 
-        balanceDTO.Amount = AmountCustomer - productResponse.Response!.MinimumAmount;
+        registrationDTO.Id = registrationResponse.Response!.Id;
+        balanceDTO.Amount = balanceResponse.Response!.Amount - productResponse.Response!.MinimumAmount;
         balanceDTO.CustomerId = registrationDTO.CustomerId;
         var responseHttp = await repository.Put("/api/Balances", balanceDTO);
         if (responseHttp.Error)
@@ -58,6 +62,6 @@
     private void Return()
     {
         registrationsForm!.FormPostedSuccessfully = true;
-        navigationManager.NavigateTo($"/dashboard");
+        navigationManager.NavigateTo($"/dashboard/{CustomerId}");
     }
 }

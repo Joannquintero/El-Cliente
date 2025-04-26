@@ -5,10 +5,10 @@ namespace El_Cliente.Api.Services.Funds
 {
     public interface IFundServices
     {
-        Task<Response> GetRegistrationByCustomerIdAsync(PaginationDTO pagination);
+        Task<List<RegistrationDTO>> GetRegistrationByCustomerIdAsync(long customerId);
 
-        Task<Response> OpeningAsync(RegistrationDTO registrationDTO);
+        Task<RegistrationDTO> OpeningAsync(RegistrationDTO registrationDTO);
 
-        Task<Response> CancellationsAsync(RegistrationDTO registrationDTO);
+        Task<RegistrationDTO> CancellationsAsync(RegistrationDTO registrationDTO);
     }
 }

@@ -2,65 +2,43 @@ using CurrieTechnologies.Razor.SweetAlert2;
 using El_Cliente.Shared.DTOs;
 using ElCliente.Web.Repository;
 using Microsoft.AspNetCore.Components;
-using System.Net;
 
 namespace ElCliente.Web.Pages
 {
     public partial class Dashboard
     {
+        private decimal AmountCustomer;
+
         [Inject] private IRepository _repository { get; set; } = null!;
 
-        private int currentPage = 1;
-        private int totalPages;
+        private List<RegistrationDTO>? Registrations { get; set; }
 
-        private List<CustomerDTO>? Customers { get; set; }
+        private RegistrationDTO registrationDTO = new();
 
-        [Parameter]
-        [SupplyParameterFromQuery]
-        public string Page { get; set; } = string.Empty;
+        private BalanceDTO balanceDTO = new();
 
         [Parameter]
-        [SupplyParameterFromQuery]
-        public string Filter { get; set; } = string.Empty;
+        public int CustomerId { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
+            var balanceResponse = await repository.Get<BalanceDTO>($"api/Balances/GetByCustomerIdAsync?customerId={CustomerId}");
+            balanceDTO.Amount = balanceResponse.Response!.Amount;
             await LoadAsync();
         }
 
-        private async Task LoadAsync(int page = 1)
+        private async Task LoadAsync()
         {
-            if (!string.IsNullOrWhiteSpace(Page))
-            {
-                page = Convert.ToInt32(Page);
-            }
-
+            registrationDTO.CustomerId = CustomerId;
             string urlPageRequest = string.Empty;
-            string urlPageTotalRequest = string.Empty;
-
-            if (string.IsNullOrEmpty(Filter))
-            {
-                urlPageRequest = $"api/Customers/GetCustomersByBranchIdAsync?page={page}";
-                urlPageTotalRequest = $"api/Customers/totalPages";
-            }
-            else
-            {
-                urlPageRequest = $"api/Customers?page={page}&filter={Filter}";
-                urlPageTotalRequest = $"api/Customers/totalPages?filter={Filter}";
-            }
+            urlPageRequest = $"api/Funds/GetRegistrationsByCustomerIdAsync?customerId={registrationDTO.CustomerId}";
 
             try
             {
-                var urlPageResponse = await _repository.Get<List<CustomerDTO>>(urlPageRequest);
+                var urlPageResponse = await _repository.Get<List<RegistrationDTO>>(urlPageRequest);
                 if (urlPageResponse.HttpResponseMessage.IsSuccessStatusCode && urlPageResponse.Response != null)
                 {
-                    Customers = urlPageResponse.Response;
-                }
-
-                var urlPageFilterResponse = await _repository.Get<int>(urlPageTotalRequest);
-                if (urlPageFilterResponse.HttpResponseMessage.IsSuccessStatusCode)
-                {
-                    totalPages = urlPageFilterResponse.Response;
+                    Registrations = urlPageResponse.Response;
                 }
             }
             catch (Exception ex)
@@ -69,18 +47,12 @@ namespace ElCliente.Web.Pages
             }
         }
 
-        private async Task SelectedPageAsync(int page)
-        {
-            currentPage = page;
-            await LoadAsync(page);
-        }
-
-        private async Task CancellationsAsync(long id)
+        private async Task CancellationsAsync(int id, string identifier, int productId)
         {
             var result = await sweetAlertService.FireAsync(new SweetAlertOptions
             {
                 Title = "Confirmación",
-                Text = "¿Realmente deseas eliminar el registro?",
+                Text = "¿Deseas cancelar la afiliación a este producto?",
                 Icon = SweetAlertIcon.Question,
                 ShowCancelButton = true,
                 CancelButtonText = "No",
@@ -93,31 +65,23 @@ namespace ElCliente.Web.Pages
                 return;
             }
 
-            var responseHttp = await _repository.Delete($"/api/Customers/{id}");
+            var productResponse = await repository.Get<ProductDTO>($"api/Products/{productId}");
+            registrationDTO.Id = id;
+            registrationDTO.ProductId = productId;
+            registrationDTO.Identifier = identifier;
+            var CancellationResponse = await repository.Post<RegistrationDTO, RegistrationDTO>("/api/Funds/CancellationsAsync", registrationDTO);
+
+            balanceDTO.Amount = AmountCustomer + productResponse.Response!.MinimumAmount;
+            balanceDTO.CustomerId = registrationDTO.CustomerId;
+            var responseHttp = await repository.Put("/api/Balances", balanceDTO);
             if (responseHttp.Error)
             {
-                if (responseHttp.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)
-                {
-                    var message = await responseHttp.GetErrorMessageAsync();
-                    await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
-                    return;
-                }
+                var message = await responseHttp.GetErrorMessageAsync();
+                await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+                return;
             }
 
             await LoadAsync();
-        }
-
-        private async Task CleanFilterAsync()
-        {
-            Filter = string.Empty;
-            await ApplyFilterAsync();
-        }
-
-        private async Task ApplyFilterAsync()
-        {
-            int page = 1;
-            await LoadAsync(page);
-            await SelectedPageAsync(page);
         }
     }
 }

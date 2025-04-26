@@ -1,6 +1,4 @@
 ﻿using El_Cliente.Api.Data;
-using El_Cliente.Api.Helpers;
-using El_Cliente.Shared.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace El_Cliente.Api.Repository.Registration
@@ -14,16 +12,23 @@ namespace El_Cliente.Api.Repository.Registration
             _context = dataContext;
         }
 
-        public async Task<List<Shared.Entities.Registration>> GetAsync(PaginationDTO pagination)
+        public async Task<List<Shared.Entities.Registration>> GetAsync(long customerId)
         {
             var queryable = _context.Registrations
-                .Where(x => x.CustomerId == pagination.Id)
+                .Include(r => r.Product)
+                .Where(x => x.CustomerId == customerId)
                 .AsQueryable();
 
             return await queryable
                 .OrderByDescending(x => x.Id)
-                .Paginate(pagination)
                 .ToListAsync();
+        }
+
+        public async Task<Shared.Entities.Registration> GetByIdAsync(long id)
+        {
+            Shared.Entities.Registration? registration = await _context.Registrations
+                .FirstOrDefaultAsync(x => x.Id == id);
+            return registration!;
         }
 
         public async Task<Shared.Entities.Registration> CreateAsync(Shared.Entities.Registration registration)

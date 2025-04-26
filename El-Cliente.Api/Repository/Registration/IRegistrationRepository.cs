@@ -1,10 +1,10 @@
-﻿using El_Cliente.Shared.DTOs;
-
-namespace El_Cliente.Api.Repository.Registration
+﻿namespace El_Cliente.Api.Repository.Registration
 {
     public interface IRegistrationRepository
     {
-        Task<List<Shared.Entities.Registration>> GetAsync(PaginationDTO pagination);
+        Task<List<Shared.Entities.Registration>> GetAsync(long customerId);
+
+        Task<Shared.Entities.Registration> GetByIdAsync(long id);
 
         Task<Shared.Entities.Registration> CreateAsync(Shared.Entities.Registration registration);
 
