@@ -1,5 +1,6 @@
 ﻿@using El_Cliente.Shared.Entities
 @inject SweetAlertService sweetAlertService
+@inject IRepository repository
 
 <NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
 
@@ -37,7 +38,7 @@
                                     <div class="mb-3">
                                         <div class="mb-0">
                                             <label>Producto:</label>
-                                            <MudSelect T="ProductDTO" @bind-Value="Product" ToStringFunc="@converterProduct" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                                            <MudSelect T="ProductDTO" @bind-Value="Product" ToStringFunc="@converterProduct" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" @bind-Value:after="ProductOnValueChanged">
                                                 <MudSelectItem Value="@(new ProductDTO() { Id = 0, Name = "Seleccione" })">@((MarkupString)"Seleccione")</MudSelectItem>
                                                 @foreach (var prod in Products!)
                                                 {
@@ -64,7 +65,7 @@
 
     Func<BranchDTO, string> converter = p => p?.Name;
 
-    Func<BranchDTO, string> converterProduct = p => p?.Name;
+    Func<ProductDTO, string> converterProduct = p => p?.Name;
 
     [Parameter]
     [EditorRequired]
@@ -82,12 +83,9 @@
     [EditorRequired]
     public List<BranchDTO> Branchs { get; set; } = new();
 
-    // [Parameter]
-    // [EditorRequired]
     public List<ProductDTO> Products { get; set; } = new();
 
     public bool FormPostedSuccessfully { get; set; }
-
 
     public BranchDTO brand { get; set; } = new BranchDTO { Id = 0, Name = "Seleccione" };
 
@@ -100,12 +98,34 @@
 
     private async Task OnDataAnnotationsValidatedAsync()
     {
+        if (brand.Id == 0)
+        {
+            await sweetAlertService.FireAsync("Seleccione una sucursal.", null, SweetAlertIcon.Error);
+            return;
+        }
+
+        if (Product.Id == 0)
+        {
+            await sweetAlertService.FireAsync("Seleccione un producto.", null, SweetAlertIcon.Error);
+            return;
+        }
+
         await OnValidSubmit.InvokeAsync();
     }
 
     private async void OnValueChanged()
     {
-        var kdkd = brand;
+        var httpResponse = await repository.Get<List<ProductDTO>>($"api/Products/GetByBranchIdAsync?branchId={brand.Id}");
+        Products = new List<ProductDTO>();
+        foreach (var prod in httpResponse!.Response!)
+        {
+            Products.Add(new ProductDTO { Id = prod.Id, Name = prod.Name });
+        }
+    }
+
+    private void ProductOnValueChanged()
+    {
+        RegistrationDTO.ProductId = Product.Id;
     }
 
     private async Task OnBeforeInternalNavigation(LocationChangingContext context)

@@ -1,4 +1,5 @@
 ﻿using El_Cliente.Api.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace El_Cliente.Api.Repository.Product
 {
@@ -9,6 +10,31 @@ namespace El_Cliente.Api.Repository.Product
         public ProductRepository(DataContext dataContext)
         {
             _context = dataContext;
+        }
+
+        public async Task<Shared.Entities.Product> GetAsync(long id)
+        {
+            Shared.Entities.Product? product = await _context.Products
+                .FirstOrDefaultAsync(x => x.Id == id);
+            return product!;
+        }
+
+        public async Task<List<Shared.Entities.Product>> GetByBranchIdAsync(long branchId)
+        {
+            List<Shared.Entities.Product> response = new();
+            List<Shared.Entities.Availability> availability = await _context.Availability
+                  .Where(x => x.BranchId == branchId)
+                  .ToListAsync();
+
+            foreach (var ava in availability)
+            {
+                var product = _context.Products.FirstOrDefaultAsync(x => x.Id == ava.ProductId);
+                if (product != null)
+                {
+                    response.Add(product.Result!);
+                }
+            }
+            return response!;
         }
     }
 }
